@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  resumes   Resume[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Resume {
+  id        Int      @id @default(autoincrement())
+  title     String
+  template  String   @default("modern") // e.g., modern, minimal, professional
+  color     String   @default("#3b82f6") // e.g., blue default
+  font      String   @default("Inter")
+  
+  // Personal Info
+  fullName  String?
+  jobTitle  String?
+  email     String?
+  phone     String?
+  address   String?
+  summary   String?
+  
+  // Relations
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  experiences Experience[]
+  educations  Education[]
+  skills      Skill[]
+  projects    Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  company     String
+  position    String
+  startDate   String
+  endDate     String?
+  description String?
+  order       Int      @default(0)
+
+  resumeId    Int
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id          Int      @id @default(autoincrement())
+  school      String
+  degree      String
+  field       String?
+  startDate   String
+  endDate     String?
+  order       Int      @default(0)
+
+  resumeId    Int
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String
+  level     String?  // Beginner, Intermediate, Expert
+  order     Int      @default(0)
+
+  resumeId  Int
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  url         String?
+  order       Int      @default(0)
+
+  resumeId    Int
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
