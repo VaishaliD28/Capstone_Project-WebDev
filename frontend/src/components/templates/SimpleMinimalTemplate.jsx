@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SimpleMinimalTemplate({ formData, sectionOrder, themeColor }) {
+export default function SimpleMinimalTemplate({ formData, sectionOrder, themeColor, skillsStyle = 'text' }) {
   const sections = {
     summary: formData.summary && (
       <div key="summary" className="mt-4 flex">
@@ -31,7 +31,32 @@ export default function SimpleMinimalTemplate({ formData, sectionOrder, themeCol
         <h3 className="w-1/4 uppercase text-xs tracking-wider font-bold text-gray-500 pr-4 text-right pt-1">
           Skills
         </h3>
-        <p className="w-3/4 whitespace-pre-wrap text-sm leading-relaxed">{formData.skills}</p>
+        <div className="w-3/4">
+          {skillsStyle === 'tags' ? (
+            <div className="flex flex-wrap gap-2">
+              {formData.skills.split(',').map((s, i) => s.trim() && (
+                <span key={i} className="px-2 py-0.5 rounded border text-xs font-semibold" style={{ borderColor: themeColor, color: themeColor }}>
+                  {s.trim()}
+                </span>
+              ))}
+            </div>
+          ) : skillsStyle === 'bars' ? (
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 pt-1">
+              {formData.skills.split(',').map((s, i) => s.trim() && (
+                <div key={i}>
+                  <div className="flex justify-between text-xs font-semibold mb-1">
+                    <span>{s.trim()}</span>
+                  </div>
+                  <div className="h-1 w-full bg-gray-200">
+                    <div className="h-full" style={{ width: `${(Math.sin(i + s.length) * 20) + 75}%`, backgroundColor: themeColor }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{formData.skills}</p>
+          )}
+        </div>
       </div>
     )
   };
