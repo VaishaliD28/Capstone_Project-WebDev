@@ -1,84 +1,149 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+// src/pages/Signup.jsx
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useStore from '../store/useStore';
+import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
+import { UserPlus, Mail, Lock, User, ArrowRight } from 'lucide-react';
 
-const Signup = () => {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
-  const signup = useStore((state) => state.signup);
-  const loading = useStore((state) => state.loading);
+export default function SignupPage() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
-  const [errorMsg, setErrorMsg] = React.useState('');
 
-  const onSubmit = async (data) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      await signup(data.name, data.email, data.password);
+      await signup(name, email, password);
       navigate('/dashboard');
     } catch (err) {
-      setErrorMsg(err.response?.data?.error || 'Failed to sign up');
+      setError(err.message || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Create an account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          {errorMsg && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm">
-              {errorMsg}
-            </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-              <input
-                type="text"
-                {...register('name', { required: 'Name is required' })}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              />
-              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
-              <input
-                type="email"
-                {...register('email', { required: 'Email is required' })}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-              <input
-                type="password"
-                {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Minimum 6 characters' } })}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] dark:bg-slate-900 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-400/20 dark:bg-purple-600/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-400/20 dark:bg-indigo-600/20 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000" />
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
+        className="w-full max-w-md p-8 relative z-10"
+      >
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-indigo-500/10 border border-white/20 dark:border-slate-700/50">
+          
+          <div className="text-center mb-8">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', delay: 0.2 }}
+              className="w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30 -rotate-3"
+            >
+              <UserPlus className="w-7 h-7 text-white rotate-3" />
+            </motion.div>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+              Create account
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">
+              Join Resumify and build your future
+            </p>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }} 
+                className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-xl text-sm font-medium border border-red-100 dark:border-red-800 text-center"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Full Name</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all backdrop-blur-sm"
+                  placeholder="Jane Doe"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Email</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all backdrop-blur-sm"
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Password</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all backdrop-blur-sm"
+                  placeholder="At least 6 characters"
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none mt-4"
             >
-              {loading ? 'Signing up...' : 'Sign up'}
+              {loading ? 'Creating account...' : 'Create account'}
+              {!loading && <ArrowRight className="w-5 h-5" />}
             </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700/50 text-center">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+              Already have an account?{' '}
+              <Link to="/login" className="text-indigo-600 dark:text-indigo-400 font-bold hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline transition-all">
+                Sign in
+              </Link>
+            </p>
           </div>
-        </form>
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Already have an account? <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">Log in</Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
-};
-
-export default Signup;
+}

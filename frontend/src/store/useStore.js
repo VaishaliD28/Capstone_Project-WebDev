@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
+// ✅ FIXED BASE URL (IMPORTANT)
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL + '/api',
 });
 
 // 🔐 Attach token automatically
@@ -29,7 +30,7 @@ const useStore = create((set, get) => ({
     set({ theme: newTheme });
   },
 
-  // 🔐 LOGIN (FIXED)
+  // 🔐 LOGIN
   login: async (email, password) => {
     set({ loading: true });
     try {
@@ -43,7 +44,7 @@ const useStore = create((set, get) => ({
       });
 
       await get().fetchUser();
-      await get().fetchResumes(); // ✅ FIX ADDED
+      await get().fetchResumes();
 
       return true;
     } catch (error) {
@@ -52,7 +53,7 @@ const useStore = create((set, get) => ({
     }
   },
 
-  // 🆕 SIGNUP (FIXED)
+  // 🆕 SIGNUP
   signup: async (name, email, password) => {
     set({ loading: true });
     try {
@@ -66,7 +67,7 @@ const useStore = create((set, get) => ({
       });
 
       await get().fetchUser();
-      await get().fetchResumes(); // ✅ FIX ADDED
+      await get().fetchResumes();
 
       return true;
     } catch (error) {
@@ -96,20 +97,20 @@ const useStore = create((set, get) => ({
     }
   },
 
-  // 📄 Fetch resumes (FIXED SAFE)
+  // 📄 Fetch resumes
   fetchResumes: async () => {
     set({ loading: true });
     try {
       const res = await api.get('/resumes');
 
       set({
-        resumes: res.data || [], // ✅ safe fallback
+        resumes: res.data || [],
         loading: false,
       });
     } catch (error) {
       console.error("Fetch resumes error:", error);
       set({
-        resumes: [], // ✅ avoid undefined
+        resumes: [],
         loading: false,
       });
     }
@@ -175,7 +176,7 @@ const useStore = create((set, get) => ({
     }
   },
 
-  // ⚡ Local update (builder)
+  // ⚡ Local update
   updateCurrentResumeLocal: (data) => {
     set((state) => ({
       currentResume: { ...state.currentResume, ...data },
