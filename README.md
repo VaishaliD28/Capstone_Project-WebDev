@@ -1,13 +1,16 @@
 # Resumify - Advanced Resume Builder SaaS
 
 ## Features
-- Drag & Drop Resume Builder
-- Live Preview
-- 5 Modern Templates
-- PDF Export
-- Dark/Light Mode
-- Zero-Config Database (SQLite)
-- Node.js & React
+-Drag & Drop Resume Builder
+-Live Preview with Real-Time Updates
+-Modern & Professional Templates
+-PDF Export & Download
+-Dark / Light Mode with Theme Switching
+-User Authentication (Login / Signup)
+-Persistent User Data (Resume Save & Access Anytime)
+-AI-Based Resume Analysis & Job Role Suggestions
+-Skill Gap Recommendations for Target Jobs
+-Resume Upload & Parsing (PDF/DOC support)
 
 ## Prerequisites
 - Node.js (v16+)
