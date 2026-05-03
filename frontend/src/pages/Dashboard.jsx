@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { resumeAPI } from '../services/api';
 import { motion } from 'framer-motion';
-import { Plus, FileText, Trash2, Edit3, LogOut, LayoutDashboard, Clock } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit3, LogOut, LayoutDashboard, Clock, Sparkles } from 'lucide-react';
+import ResumeAnalyzerSidebar from '../components/ResumeAnalyzerSidebar';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -14,6 +15,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [creating, setCreating] = useState(false);
+  const [isAnalyzerOpen, setIsAnalyzerOpen] = useState(false);
 
   useEffect(() => {
     resumeAPI.list()
@@ -110,20 +112,29 @@ export default function DashboardPage() {
               Manage and edit your professional resumes.
             </p>
           </div>
-          <button 
-            onClick={handleCreate} 
-            disabled={creating} 
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {creating ? (
-              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <button 
+              onClick={() => setIsAnalyzerOpen(true)}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl font-semibold shadow-sm transition-all transform hover:-translate-y-0.5"
+            >
+              <Sparkles className="w-5 h-5" />
+              Analyze Resume
+            </button>
+            <button 
+              onClick={handleCreate} 
+              disabled={creating} 
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {creating ? (
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                  <Plus className="w-5 h-5" />
+                </motion.div>
+              ) : (
                 <Plus className="w-5 h-5" />
-              </motion.div>
-            ) : (
-              <Plus className="w-5 h-5" />
-            )}
-            {creating ? 'Creating...' : 'New Resume'}
-          </button>
+              )}
+              {creating ? 'Creating...' : 'New Resume'}
+            </button>
+          </div>
         </motion.div>
 
         {error && (
@@ -217,6 +228,12 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </main>
+
+      {/* Resume Analyzer Sidebar */}
+      <ResumeAnalyzerSidebar 
+        isOpen={isAnalyzerOpen} 
+        onClose={() => setIsAnalyzerOpen(false)} 
+      />
     </div>
   );
 }
